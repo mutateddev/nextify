@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --bg: #ffffff;
@@ -49,4 +50,43 @@
 
   --color-border: var(--border);
   --color-shadow: var(--shadow);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.glow-text {
+  color: var(--text);
+  text-shadow:
+    0 0 35px #1db954,
+    0 0 12px #1db954,
+    0 0 32px #1db954;
+  font-weight: 700;
+  animation:
+    pulse 2s infinite,
+    rainbow 6s linear infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes rainbow {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
 }

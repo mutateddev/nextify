@@ -1,11 +1,9 @@
-import { HomeIcon } from 'lucide-react';
+import Navbar from '@/components/ui/Navbar';
 
 export default function Home() {
   return (
-    <div className='bg-bg h-screen text-4xl font-inter'>
-      <h1>
-        this is the home <HomeIcon size={40} color='#228c18' strokeWidth={3} />
-      </h1>
+    <div className='h-full'>
+      <Navbar />
     </div>
   );
 }
