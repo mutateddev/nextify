@@ -53,6 +53,7 @@ const AllSongs = () => {
                 alt={song.title}
                 width={300}
                 height={300}
+                loading='lazy'
                 className='w-full h-52 object-cover rounded-md'
               />
 

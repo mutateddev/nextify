@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import useMusic from '../context/useMusic';
 
 const MusicPlayer = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -20,6 +21,7 @@ const MusicPlayer = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [prevVol, setPrevVol] = useState(0);
+  const { setIsQueueModalOpen } = useMusic();
 
   const togglePlayButton = () => {
     if (!audioRef.current) return;
@@ -166,7 +168,10 @@ const MusicPlayer = () => {
             <Repeat1 size={18} />
           </button>
 
-          <button className='text-text-muted hover:text-text transition'>
+          <button
+            className='text-text-muted hover:text-text transition cursor-pointer'
+            onClick={() => setIsQueueModalOpen(prv => !prv)}
+          >
             <ListMusic size={18} />
           </button>
 
