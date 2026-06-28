@@ -2,9 +2,20 @@
 
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 const ToggleTheme = () => {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const mounted = () => {
+      setMounted(true);
+    };
+    mounted();
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <button
