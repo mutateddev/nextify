@@ -1,7 +1,51 @@
+'use client';
+
 import Logo from '@/components/shared/Logo';
+import signupUser from '@/lib/auth/signup-user';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState, SubmitEvent } from 'react';
 
 const SignupPage = () => {
+  const router = useRouter();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
+
+  const handleSignup = async (e: SubmitEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setMessage({
+        type: 'error',
+        text: 'All fields are required!',
+      });
+      return;
+    }
+
+    const result = await signupUser(name, email, password);
+
+    if (result?.error) {
+      setMessage({
+        type: 'error',
+        text: result.error,
+      });
+      return;
+    }
+
+    setMessage({
+      type: 'success',
+      text: 'Signup successful! Redirecting...',
+    });
+
+    setTimeout(() => {
+      router.push('/');
+    }, 3000);
+  };
+
   return (
     <div className='h-screen flex justify-center items-center w-full bg-bg-soft'>
       <div className='bg-bg border border-border flex flex-col items-center px-6 lg:px-12 py-10 rounded-xl w-[90%] max-w-105 shadow-lg hover:shadow-xl transition'>
@@ -11,20 +55,38 @@ const SignupPage = () => {
           Signup to Nextify
         </h2>
 
-        <form className='w-full'>
+        <form onSubmit={handleSignup}>
+          {message && (
+            <div
+              className={`mb-4 rounded-md px-4 py-3 text-center text- font-medium
+          ${
+            message.type === 'error'
+              ? 'bg-red-500/10 text-red-400 border border-red-500/20'
+              : 'bg-green-500/10 text-green-400 border border-green-500/20'
+          }`}
+            >
+              {message.text}
+            </div>
+          )}
           <input
+            value={name}
+            onChange={e => setName(e.target.value)}
             type='text'
             placeholder='Name'
             className='w-full outline-none border border-border bg-bg-soft p-3 rounded-md text-text placeholder:text-text-muted mb-4 focus:border-primary transition'
           />
 
           <input
+            value={email}
+            onChange={e => setEmail(e.target.value)}
             type='email'
             placeholder='Email'
             className='w-full outline-none border border-border bg-bg-soft p-3 rounded-md text-text placeholder:text-text-muted mb-4 focus:border-primary transition'
           />
 
           <input
+            value={password}
+            onChange={e => setPassword(e.target.value)}
             type='password'
             placeholder='Password'
             className='w-full outline-none border border-border bg-bg-soft p-3 rounded-md text-text placeholder:text-text-muted mb-6 focus:border-primary transition'
