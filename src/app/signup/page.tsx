@@ -28,10 +28,10 @@ const SignupPage = () => {
 
     const result = await signupUser(name, email, password);
 
-    if (result?.error) {
+    if (result.type === 'error') {
       setMessage({
         type: 'error',
-        text: result.error,
+        text: result.text,
       });
       return;
     }
@@ -43,7 +43,7 @@ const SignupPage = () => {
 
     setTimeout(() => {
       router.push('/');
-    }, 3000);
+    }, 2000);
   };
 
   return (
@@ -55,7 +55,7 @@ const SignupPage = () => {
           Signup to Nextify
         </h2>
 
-        <form onSubmit={handleSignup}>
+        <form onSubmit={handleSignup} className='w-full'>
           {message && (
             <div
               className={`mb-4 rounded-md px-4 py-3 text-center text- font-medium
