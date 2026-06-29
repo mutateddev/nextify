@@ -4,7 +4,7 @@ import Logo from '@/components/shared/Logo';
 import signupUser from '@/lib/auth/signup-user';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, SubmitEvent } from 'react';
+import { useState, type SubmitEvent } from 'react';
 
 const SignupPage = () => {
   const router = useRouter();
