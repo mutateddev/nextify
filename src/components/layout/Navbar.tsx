@@ -1,9 +1,25 @@
+'use client';
+
 import { HouseIcon, Search } from 'lucide-react';
 import Link from 'next/link';
 import Logo from '../shared/Logo';
 import ToggleTheme from '../ui/ToggleTheme';
+import useSession from '@/hooks/useSession';
+import logoutUser from '@/lib/auth/logout-user';
+import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
+  const router = useRouter();
+  const { session, loading } = useSession();
+
+  const handleLogout = async () => {
+    const result = await logoutUser();
+
+    if (result.type === 'success') {
+      router.push('/');
+    }
+  };
+
   return (
     <nav className='fixed top-0 left-0 w-full h-16 flex items-center justify-between px-6 bg-surface/80 backdrop-blur-md border-b border-border z-50'>
       {/* LEFT */}
@@ -43,12 +59,25 @@ const Navbar = () => {
           </a>
         </div>
         <ToggleTheme />
-        <Link
-          href='/login'
-          className='h-10 px-6 flex items-center rounded-full bg-bg text-text font-semibold hover:bg-surface-hover transition'
-        >
-          Login
-        </Link>
+        {!loading && (
+          <>
+            {session ? (
+              <button
+                onClick={handleLogout}
+                className='h-10 px-6 flex items-center rounded-full bg-bg text-text font-semibold hover:bg-surface-hover transition cursor-pointer'
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                href='/login'
+                className='h-10 px-6 flex items-center rounded-full bg-bg text-text font-semibold hover:bg-surface-hover transition'
+              >
+                Login
+              </Link>
+            )}
+          </>
+        )}
       </div>
     </nav>
   );
