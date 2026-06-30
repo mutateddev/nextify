@@ -1,7 +1,12 @@
-import { Play } from 'lucide-react';
+'use client';
+
+import { supabase } from '@/lib/supabase-client';
+import { useQuery } from '@tanstack/react-query';
+import { type Song } from '@/types/song';
+import { Play, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 
-const songs = [
+const tempSongs = [
   {
     id: 1,
     title: 'Neon Drift',
@@ -35,6 +40,63 @@ const songs = [
 ];
 
 const AllSongs = () => {
+  const getAllSongs = async () => {
+    const { data, error } = await supabase.from('songs').select('*');
+    if (error) {
+      console.log('fetch all songs error');
+      return;
+    }
+
+    return data;
+  };
+
+  const {
+    data: songs,
+    isLoading,
+    error,
+    isError,
+  } = useQuery({
+    queryFn: getAllSongs,
+    queryKey: ['allSongs'],
+  });
+
+  if (isLoading)
+    return (
+      <div className='space-y-3 animate-pulse'>
+        <div className='h-5 w-32 bg-surface-hover rounded-md mb-4' />
+
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div
+            key={i}
+            className='flex items-center gap-3 p-2 rounded-lg bg-surface/40'
+          >
+            <div className='w-10 h-10 bg-surface-hover rounded-md' />
+
+            <div className='flex-1 space-y-2'>
+              <div className='h-3 w-1/2 bg-surface-hover rounded' />
+              <div className='h-2 w-1/3 bg-surface-hover rounded' />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  if (isError)
+    return (
+      <div className='flex flex-col items-center justify-center py-10 text-center'>
+        <Trash2 size={20} className='text-red-500 mb-2' />
+
+        <p className='text-text font-medium'>Failed to load library</p>
+        <p className='text-text-muted text-sm mt-1'>Please try again later</p>
+
+        <button
+          onClick={() => window.location.reload()}
+          className='mt-4 px-4 py-2 rounded-full bg-primary text-black text-sm font-medium hover:opacity-90 transition'
+        >
+          Retry
+        </button>
+      </div>
+    );
+
   return (
     <div className='min-h-[90vh] bg-bg-soft my-20 p-6 lg:ml-78 rounded-xl mx-4'>
       <h2 className='text-xl text-text font-semibold font-sora mb-4'>
@@ -42,14 +104,14 @@ const AllSongs = () => {
       </h2>
 
       <div className='grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
-        {songs.map(song => (
+        {songs?.map((song: Song) => (
           <div
             key={song.id}
             className='group bg-surface p-3 rounded-lg cursor-pointer hover:bg-surface-hover transition'
           >
             <div className='relative'>
               <Image
-                src={song.cover}
+                src={song.cover_image_url}
                 alt={song.title}
                 width={300}
                 height={300}

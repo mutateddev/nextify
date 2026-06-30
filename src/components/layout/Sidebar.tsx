@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Library, Plus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import useSession from '@/hooks/useSession';
+import LibraryList from '../features/music/components/LibraryList';
 
 const playlists = [
   {
@@ -42,6 +43,7 @@ const playlists = [
 const Sidebar = () => {
   const { session, loading } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const user_id = session?.user.id;
 
   if (loading) {
     return (
@@ -119,36 +121,7 @@ const Sidebar = () => {
           </Link>
         </div>
 
-        <div className='space-y-2'>
-          {playlists.map(item => (
-            <div
-              key={item.id}
-              className='flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-surface-hover transition group relative'
-            >
-              <button className='absolute right-2 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center justify-center w-8 h-8 rounded-full bg-bg-soft border border-border text-text-muted hover:text-red-500 hover:border-red-500 hover:bg-red-500/10 transition cursor-pointer'>
-                <Trash2 size={16} />
-              </button>
-
-              <Image
-                src={item.cover}
-                alt={item.title}
-                width={40}
-                height={40}
-                className='w-10 h-10 rounded-md object-cover'
-              />
-
-              <div className='min-w-0'>
-                <p className='text-text font-medium truncate group-hover:text-primary transition'>
-                  {item.title}
-                </p>
-
-                <p className='text-text-muted text-sm truncate'>
-                  {item.artist}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <LibraryList userId={user_id} />
       </aside>
 
       <button
