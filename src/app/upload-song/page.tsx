@@ -1,6 +1,21 @@
+'use client';
+
+import { useEffect } from 'react';
 import Logo from '@/components/shared/Logo';
+import { supabase } from '@/lib/supabase-client';
+import { useRouter } from 'next/navigation';
 
 const UploadSongPage = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        router.push('/');
+      }
+    });
+  }, []);
+
   return (
     <div className='h-screen flex justify-center items-center w-full bg-bg-soft'>
       <div className='bg-bg border border-border flex flex-col items-center px-6 lg:px-12 py-10 rounded-xl w-[90%] max-w-105 shadow-lg hover:shadow-xl transition'>
