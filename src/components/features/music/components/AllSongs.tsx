@@ -5,41 +5,10 @@ import { useQuery } from '@tanstack/react-query';
 import { type Song } from '@/types/song';
 import { Play, Trash2 } from 'lucide-react';
 import Image from 'next/image';
-
-const tempSongs = [
-  {
-    id: 1,
-    title: 'Neon Drift',
-    artist: 'Synthwave Collective',
-    cover: '/images/cover-1.jpeg',
-  },
-  {
-    id: 2,
-    title: 'Midnight Echoes',
-    artist: 'Neon Skyline',
-    cover: '/images/cover-2.jpeg',
-  },
-  {
-    id: 3,
-    title: 'Velvet Nights',
-    artist: 'Luna Wave',
-    cover: '/images/cover-3.jpeg',
-  },
-  {
-    id: 4,
-    title: 'After Hours',
-    artist: 'Night Drive',
-    cover: '/images/cover-4.jpeg',
-  },
-  {
-    id: 5,
-    title: 'Golden Static',
-    artist: 'Echo Room',
-    cover: '/images/cover-5.jpeg',
-  },
-];
+import useMusic from '../context/useMusic';
 
 const AllSongs = () => {
+  const { setCurrentIndex, setQueue } = useMusic();
   const getAllSongs = async () => {
     const { data, error } = await supabase.from('songs').select('*');
     if (error) {
@@ -53,33 +22,40 @@ const AllSongs = () => {
   const {
     data: songs,
     isLoading,
-    error,
     isError,
   } = useQuery({
     queryFn: getAllSongs,
     queryKey: ['allSongs'],
   });
 
+  const startPlayingSong = (songs: Song[], i: number) => {
+    setCurrentIndex(i);
+    setQueue(songs);
+  };
+
   if (isLoading)
     return (
-      <div className='space-y-3 animate-pulse'>
-        <div className='h-5 w-32 bg-surface-hover rounded-md mb-4' />
+      <div className='min-h-[90vh] bg-bg-soft my-20 p-6 lg:ml-78 rounded-xl mx-4'>
+        <div className='space-y-3 animate-pulse'>
+          <div className='h-5 w-32 bg-surface-hover rounded-md mb-4' />
 
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div
-            key={i}
-            className='flex items-center gap-3 p-2 rounded-lg bg-surface/40'
-          >
-            <div className='w-10 h-10 bg-surface-hover rounded-md' />
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div
+              key={i}
+              className='flex items-center gap-3 p-2 rounded-lg bg-surface/40'
+            >
+              <div className='w-10 h-10 bg-surface-hover rounded-md' />
 
-            <div className='flex-1 space-y-2'>
-              <div className='h-3 w-1/2 bg-surface-hover rounded' />
-              <div className='h-2 w-1/3 bg-surface-hover rounded' />
+              <div className='flex-1 space-y-2'>
+                <div className='h-3 w-1/2 bg-surface-hover rounded' />
+                <div className='h-2 w-1/3 bg-surface-hover rounded' />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     );
+
   if (isError)
     return (
       <div className='flex flex-col items-center justify-center py-10 text-center'>
@@ -125,11 +101,11 @@ const AllSongs = () => {
       <h2 className='text-xl text-text font-semibold font-sora mb-4'>
         New Releases
       </h2>
-
       <div className='grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
-        {songs?.map((song: Song) => (
+        {songs?.map((song: Song, i: number) => (
           <div
             key={song.id}
+            onClick={() => startPlayingSong(songs, i)}
             className='group bg-surface p-3 rounded-lg cursor-pointer hover:bg-surface-hover transition'
           >
             <div className='relative'>
@@ -138,7 +114,7 @@ const AllSongs = () => {
                 alt={song.title}
                 width={300}
                 height={300}
-                loading='lazy'
+                loading='eager'
                 className='w-full h-52 object-cover rounded-md'
               />
 

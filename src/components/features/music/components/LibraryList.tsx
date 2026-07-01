@@ -1,15 +1,18 @@
 import { supabase } from '@/lib/supabase-client';
 import { useQuery } from '@tanstack/react-query';
-import { Library, Trash2 } from 'lucide-react';
+import useMusic from '../context/useMusic';
 import Image from 'next/image';
 import DeleteSongButton from './DeleteSongButton';
-import { Song_Myung } from 'next/font/google';
+import { Library } from 'lucide-react';
+import { type Song } from '@/types/song';
 
 type LibraryListProps = {
   userId: string | undefined;
 };
 
 const LibraryList = ({ userId }: LibraryListProps) => {
+  const { setQueue, setCurrentIndex } = useMusic();
+
   const getUserSongs = async () => {
     const { data, error } = await supabase
       .from('songs')
@@ -34,7 +37,12 @@ const LibraryList = ({ userId }: LibraryListProps) => {
     enabled: !!userId,
   });
 
-  // 🔄 LOADING UI
+  const startPlayingSong = (songs: Song[], i: number) => {
+    setCurrentIndex(i);
+    setQueue(songs);
+  };
+
+  // LOADING UI
   if (isLoading) {
     return (
       <div className='space-y-3 animate-pulse'>
@@ -54,7 +62,7 @@ const LibraryList = ({ userId }: LibraryListProps) => {
     );
   }
 
-  // ❌ ERROR UI
+  // ERROR UI
   if (isError) {
     return (
       <div className='flex flex-col items-center justify-center py-10 text-center'>
@@ -76,7 +84,7 @@ const LibraryList = ({ userId }: LibraryListProps) => {
     );
   }
 
-  // 🎵 EMPTY STATE
+  //  EMPTY STATE
   if (!userPlaylist || userPlaylist.length === 0) {
     return (
       <div className='flex flex-col items-center justify-center py-10 text-center text-text-muted'>
@@ -86,12 +94,13 @@ const LibraryList = ({ userId }: LibraryListProps) => {
     );
   }
 
-  // 🎧 SUCCESS UI
+  //  SUCCESS UI
   return (
     <div className='space-y-2'>
-      {userPlaylist.map(song => (
+      {userPlaylist.map((song, i) => (
         <div
           key={song.id}
+          onClick={() => startPlayingSong(userPlaylist, i)}
           className='flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-surface-hover transition group relative'
         >
           <DeleteSongButton
@@ -102,6 +111,7 @@ const LibraryList = ({ userId }: LibraryListProps) => {
           <Image
             src={song.cover_image_url}
             alt={song.title}
+            loading='eager'
             width={40}
             height={40}
             className='w-10 h-10 rounded-md object-cover'

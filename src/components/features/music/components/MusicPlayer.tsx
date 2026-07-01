@@ -1,5 +1,8 @@
 'use client';
 
+import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
+import useMusic from '../context/useMusic';
 import {
   ListMusic,
   Pause,
@@ -10,9 +13,6 @@ import {
   Volume2,
   VolumeOff,
 } from 'lucide-react';
-import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
-import useMusic from '../context/useMusic';
 
 const MusicPlayer = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -21,7 +21,7 @@ const MusicPlayer = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [prevVol, setPrevVol] = useState(0);
-  const { setIsQueueModalOpen } = useMusic();
+  const { setIsQueueModalOpen, currentMusic, playNext, playPrev } = useMusic();
 
   const togglePlayButton = () => {
     if (!audioRef.current) return;
@@ -29,9 +29,7 @@ const MusicPlayer = () => {
     if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
-    }
-
-    if (!isPlaying) {
+    } else {
       audioRef.current.play();
       setIsPlaying(true);
     }
@@ -47,6 +45,7 @@ const MusicPlayer = () => {
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
     const newTime = parseFloat(e.target.value);
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
@@ -94,7 +93,7 @@ const MusicPlayer = () => {
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', updateTime);
     };
-  }, []);
+  }, [currentMusic]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -102,10 +101,33 @@ const MusicPlayer = () => {
     }
   }, [volume]);
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentMusic) return;
+
+    audio.load();
+
+    setCurrentTime(0);
+    setDuration(0);
+
+    const playAudio = async () => {
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.log('Audio play error', error);
+        setIsPlaying(false);
+      }
+    };
+    playAudio();
+  }, [currentMusic]);
+
+  if (!currentMusic) return null;
+
   return (
     <div className='fixed bottom-0 left-0 w-full bg-bg/90 backdrop-blur-md border-t border-border text-text px-4 py-3 shadow-lg z-50'>
       <audio
-        src='/music/brain-boost.mp3'
+        src={currentMusic.audio_url || ''}
         ref={audioRef}
         className='hidden'
       ></audio>
@@ -113,23 +135,31 @@ const MusicPlayer = () => {
         {/* LEFT - SONG INFO */}
         <div className='flex items-center gap-4 min-w-50'>
           <Image
-            src='/images/cover-2.jpeg'
+            src={currentMusic.cover_image_url || ''}
             alt='cover image'
+            loading='eager'
             width={48}
             height={48}
             className='w-12 h-12 object-cover rounded-md'
           />
 
           <div className='text-sm leading-tight'>
-            <p className='text-primary font-semibold truncate'>Brain Fuel</p>
-            <p className='text-text-muted text-xs truncate'>Brainy</p>
+            <p className='text-primary font-semibold truncate'>
+              {currentMusic.title}
+            </p>
+            <p className='text-text-muted text-xs truncate'>
+              {currentMusic.artist}
+            </p>
           </div>
         </div>
 
         {/* CENTER - CONTROLS */}
         <div className='flex flex-col items-center gap-2 flex-1 max-w-md'>
           <div className='flex items-center gap-5'>
-            <button className='text-text-muted hover:text-text transition'>
+            <button
+              onClick={playPrev}
+              className='text-text-muted hover:text-text transition'
+            >
               <SkipBack size={20} />
             </button>
 
@@ -140,7 +170,10 @@ const MusicPlayer = () => {
               {isPlaying ? <Pause size={18} /> : <Play size={18} />}
             </button>
 
-            <button className='text-text-muted hover:text-text transition'>
+            <button
+              onClick={playNext}
+              className='text-text-muted hover:text-text transition'
+            >
               <SkipForward size={20} />
             </button>
           </div>
@@ -148,13 +181,13 @@ const MusicPlayer = () => {
           {/* PROGRESS */}
           <div className='w-full flex items-center gap-2 text-xs'>
             <span className='text-text-muted'>{formatTime(currentTime)}</span>
-
             <input
+              key={currentMusic.id}
               type='range'
+              value={currentTime}
               onChange={handleSeek}
               min={0}
               max={duration || 0}
-              value={currentTime}
               className='w-full h-1 accent-primary cursor-pointer'
             />
 
