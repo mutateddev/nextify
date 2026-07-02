@@ -9,8 +9,6 @@ import {
   Play,
   Repeat,
   Repeat1,
-  Repeat2,
-  RepeatOff,
   SkipBack,
   SkipForward,
   Volume2,
@@ -183,7 +181,7 @@ const MusicPlayer = () => {
           <div className='flex items-center gap-5'>
             <button
               onClick={playPrev}
-              className='text-text-muted hover:text-text transition'
+              className='text-text-muted hover:text-text transition cursor-pointer'
             >
               <SkipBack size={20} />
             </button>
@@ -197,7 +195,7 @@ const MusicPlayer = () => {
 
             <button
               onClick={playNext}
-              className='text-text-muted hover:text-text transition'
+              className='text-text-muted hover:text-text transition cursor-pointer'
             >
               <SkipForward size={20} />
             </button>
