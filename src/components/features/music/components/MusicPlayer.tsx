@@ -7,7 +7,10 @@ import {
   ListMusic,
   Pause,
   Play,
+  Repeat,
   Repeat1,
+  Repeat2,
+  RepeatOff,
   SkipBack,
   SkipForward,
   Volume2,
@@ -15,13 +18,14 @@ import {
 } from 'lucide-react';
 
 const MusicPlayer = () => {
+  const { setIsQueueModalOpen, currentMusic, playNext, playPrev } = useMusic();
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(77);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [prevVol, setPrevVol] = useState(0);
-  const { setIsQueueModalOpen, currentMusic, playNext, playPrev } = useMusic();
+  const [repeatSong, setRepeatSong] = useState(true);
 
   const togglePlayButton = () => {
     if (!audioRef.current) return;
@@ -122,6 +126,27 @@ const MusicPlayer = () => {
     playAudio();
   }, [currentMusic]);
 
+  // when sound ends run this code
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleEnded = () => {
+      if (repeatSong) {
+        audio.currentTime = 0;
+        audio.play();
+      } else {
+        playNext();
+      }
+    };
+
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, [repeatSong, playNext, currentMusic]);
+
   if (!currentMusic) return null;
 
   return (
@@ -197,8 +222,12 @@ const MusicPlayer = () => {
 
         {/* RIGHT - VOLUME */}
         <div className='flex items-center gap-3 min-w-45 justify-end'>
-          <button className='text-text-muted hover:text-text transition'>
-            <Repeat1 size={18} />
+          <button className='text-text-muted hover:text-text transition cursor-pointer'>
+            {repeatSong ? (
+              <Repeat1 size={18} onClick={() => setRepeatSong(false)} />
+            ) : (
+              <Repeat size={18} onClick={() => setRepeatSong(true)} />
+            )}
           </button>
 
           <button
