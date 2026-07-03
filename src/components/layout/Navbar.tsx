@@ -1,6 +1,6 @@
 'use client';
 
-import { HouseIcon, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Link from 'next/link';
 import Logo from '../shared/Logo';
 import ToggleTheme from '../ui/ToggleTheme';

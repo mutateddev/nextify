@@ -2,43 +2,9 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Library, Plus, Trash2 } from 'lucide-react';
-import Image from 'next/image';
+import { Library, Plus } from 'lucide-react';
 import useSession from '@/hooks/useSession';
 import LibraryList from '../features/music/components/LibraryList';
-
-const playlists = [
-  {
-    id: 1,
-    title: 'Midnight Echoes',
-    artist: 'Neon Skyline',
-    cover: '/images/cover-1.jpeg',
-  },
-  {
-    id: 2,
-    title: 'Velvet Nights',
-    artist: 'Luna Wave',
-    cover: '/images/cover-2.jpeg',
-  },
-  {
-    id: 3,
-    title: 'Neon Dreams',
-    artist: 'Cyber Aura',
-    cover: '/images/cover-3.jpeg',
-  },
-  {
-    id: 4,
-    title: 'After Hours',
-    artist: 'Night Drive',
-    cover: '/images/cover-4.jpeg',
-  },
-  {
-    id: 5,
-    title: 'Golden Static',
-    artist: 'Echo Room',
-    cover: '/images/cover-5.jpeg',
-  },
-];
 
 const Sidebar = () => {
   const { session, loading } = useSession();

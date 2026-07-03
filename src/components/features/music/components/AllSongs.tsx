@@ -6,8 +6,10 @@ import { type Song } from '@/types/song';
 import { Play, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import useMusic from '../context/useMusic';
+import SongCardSkeleton from '@/components/ui/SongCardSkeleton';
+import EmptySongState from './EmptySongState';
 
-const AllSongs = () => {
+const SongsContainer = () => {
   const { setCurrentIndex, setQueue } = useMusic();
   const getAllSongs = async () => {
     const { data, error } = await supabase.from('songs').select('*');
@@ -33,29 +35,6 @@ const AllSongs = () => {
     setQueue(songs);
   };
 
-  if (isLoading)
-    return (
-      <div className='min-h-[90vh] bg-bg-soft my-20 p-6 lg:ml-78 rounded-xl mx-4'>
-        <div className='space-y-3 animate-pulse'>
-          <div className='h-5 w-32 bg-surface-hover rounded-md mb-4' />
-
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div
-              key={i}
-              className='flex items-center gap-3 p-2 rounded-lg bg-surface/40'
-            >
-              <div className='w-10 h-10 bg-surface-hover rounded-md' />
-
-              <div className='flex-1 space-y-2'>
-                <div className='h-3 w-1/2 bg-surface-hover rounded' />
-                <div className='h-2 w-1/3 bg-surface-hover rounded' />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-
   if (isError)
     return (
       <div className='flex flex-col items-center justify-center py-10 text-center'>
@@ -73,35 +52,14 @@ const AllSongs = () => {
       </div>
     );
 
-  if (!songs || songs.length === 0) {
-    return (
-      <div className='min-h-[90vh] bg-bg-soft my-20 p-6 lg:ml-78 rounded-xl mx-4 flex flex-col items-center justify-center text-center'>
-        <div className='w-16 h-16 rounded-full bg-surface-hover flex items-center justify-center mb-4'>
-          <Play className='text-text-muted' size={22} />
-        </div>
-
-        <h2 className='text-xl font-semibold text-text mb-2'>No songs yet</h2>
-
-        <p className='text-text-muted text-sm max-w-md'>
-          Start building your library by uploading your first track.
-        </p>
-
-        <a
-          href='/upload-song'
-          className='mt-6 px-6 py-3 rounded-full bg-primary text-black font-semibold hover:opacity-90 transition'
-        >
-          Add your first song
-        </a>
-      </div>
-    );
-  }
-
   return (
     <div className='min-h-[90vh] bg-bg-soft my-20 p-6 lg:ml-78 rounded-xl mx-4'>
       <h2 className='text-xl text-text font-semibold font-sora mb-4'>
         New Releases
       </h2>
       <div className='grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+        {isLoading && <SongCardSkeleton />}
+        {!songs || (songs.length === 0 && <EmptySongState />)}
         {songs?.map((song: Song, i: number) => (
           <div
             key={song.id}
@@ -138,4 +96,4 @@ const AllSongs = () => {
   );
 };
 
-export default AllSongs;
+export default SongsContainer;
