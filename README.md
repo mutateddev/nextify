@@ -1,14 +1,16 @@
 # 🎵 Nextify
 
-A modern music streaming application built with Next.js 16, React 19, Supabase, TanStack Query, and Tailwind CSS v4.
-
-Users can upload their own songs, browse music uploaded by everyone, create a personal library, and enjoy a clean Spotify-inspired music player.
+Nextify is a full-stack music streaming application inspired by Spotify.
+Users can upload and manage their own tracks, explore songs shared by the community,
+build a personal library, and enjoy a seamless music playback experience.
 
 ## 📸 Preview
 
 ![App Preview](https://raw.githubusercontent.com/mutateddev/nextify/refs/heads/main/public/images/preview.png)
+
 ![App Preview](https://raw.githubusercontent.com/mutateddev/nextify/refs/heads/main/public/images/light-mode.png)
-![App Preview](https://raw.githubusercontent.com/mutateddev/nextify/refs/heads/main/public/images/upload-form.png)
+
+![App Preview](https://raw.githubusercontent.com/mutateddev/nextify/refs/heads/main/public/images/preview-form.png)
 
 ## 🛠 Tech Stack
 
@@ -56,10 +58,7 @@ Users can upload their own songs, browse music uploaded by everyone, create a pe
 - Responsive layout
 - Modern dark theme
 - Skeleton loading states
-- Empty states
-- Error states
-- Smooth hover animations
-- Optimized image loading with Next.js Image
+- Different States of data handling
 
 ## 🚀 Getting Started
 
