@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase-client';
 import { useQueryClient } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
+import { type MouseEvent } from 'react';
 type DeleteSongButtonProps = {
   songId: number;
   imagePath: string;
@@ -13,7 +14,9 @@ const DeleteSongButton = ({
   audioPath,
 }: DeleteSongButtonProps) => {
   const queryClient = useQueryClient();
-  const deleteSong = async () => {
+  const deleteSong = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
     // delete image
     const { error: imgError } = await supabase.storage
       .from('cover-images')

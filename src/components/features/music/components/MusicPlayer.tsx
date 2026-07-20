@@ -17,7 +17,9 @@ import {
 
 const MusicPlayer = () => {
   const { setIsQueueModalOpen, currentMusic, playNext, playPrev } = useMusic();
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(77);
   const [currentTime, setCurrentTime] = useState(0);
@@ -47,8 +49,8 @@ const MusicPlayer = () => {
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
     const newTime = parseFloat(e.target.value);
+
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
       setCurrentTime(newTime);
@@ -57,7 +59,9 @@ const MusicPlayer = () => {
 
   const handleVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
     const volume = parseInt(e.target.value);
+
     setVolume(volume);
+
     if (audioRef.current) {
       audioRef.current.volume = volume / 100;
     }
@@ -66,13 +70,16 @@ const MusicPlayer = () => {
   const toggleMute = () => {
     if (volume === 0) {
       setVolume(prevVol);
+
       if (audioRef.current) {
         audioRef.current.volume = prevVol / 100;
       }
     }
+
     if (volume !== 0) {
       setPrevVol(volume);
       setVolume(0);
+
       if (audioRef.current) {
         audioRef.current.volume = 0;
       }
@@ -105,6 +112,7 @@ const MusicPlayer = () => {
 
   useEffect(() => {
     const audio = audioRef.current;
+
     if (!audio || !currentMusic) return;
 
     audio.load();
@@ -121,12 +129,13 @@ const MusicPlayer = () => {
         setIsPlaying(false);
       }
     };
+
     playAudio();
   }, [currentMusic]);
 
-  // when sound ends run this code
   useEffect(() => {
     const audio = audioRef.current;
+
     if (!audio) return;
 
     const handleEnded = () => {
@@ -153,23 +162,25 @@ const MusicPlayer = () => {
         src={currentMusic.audio_url || ''}
         ref={audioRef}
         className='hidden'
-      ></audio>
-      <div className='max-w-7xl mx-auto flex items-center justify-between gap-6'>
+      />
+
+      <div className='max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 md:gap-6'>
         {/* LEFT - SONG INFO */}
-        <div className='flex items-center gap-4 min-w-50'>
+        <div className='flex items-center gap-3 w-full md:w-auto md:min-w-50'>
           <Image
             src={currentMusic.cover_image_url || ''}
             alt='cover image'
             loading='eager'
             width={48}
             height={48}
-            className='w-12 h-12 object-cover rounded-md'
+            className='w-12 h-12 object-cover rounded-md shrink-0'
           />
 
-          <div className='text-sm leading-tight'>
+          <div className='text-sm leading-tight min-w-0'>
             <p className='text-primary font-semibold truncate'>
               {currentMusic.title}
             </p>
+
             <p className='text-text-muted text-xs truncate'>
               {currentMusic.artist}
             </p>
@@ -177,7 +188,7 @@ const MusicPlayer = () => {
         </div>
 
         {/* CENTER - CONTROLS */}
-        <div className='flex flex-col items-center gap-2 flex-1 max-w-md'>
+        <div className='flex flex-col items-center gap-2 w-full md:flex-1 md:max-w-md'>
           <div className='flex items-center gap-5'>
             <button
               onClick={playPrev}
@@ -204,6 +215,7 @@ const MusicPlayer = () => {
           {/* PROGRESS */}
           <div className='w-full flex items-center gap-2 text-xs'>
             <span className='text-text-muted'>{formatTime(currentTime)}</span>
+
             <input
               key={currentMusic.id}
               type='range'
@@ -218,19 +230,18 @@ const MusicPlayer = () => {
           </div>
         </div>
 
-        {/* RIGHT - VOLUME */}
-        <div className='flex items-center gap-3 min-w-45 justify-end'>
-          <button className='text-text-muted hover:text-text transition cursor-pointer'>
-            {repeatSong ? (
-              <Repeat1 size={18} onClick={() => setRepeatSong(false)} />
-            ) : (
-              <Repeat size={18} onClick={() => setRepeatSong(true)} />
-            )}
+        {/* RIGHT - ACTIONS */}
+        <div className='flex items-center gap-3 w-full md:w-auto md:min-w-45 justify-center md:justify-end'>
+          <button
+            className='text-text-muted hover:text-text transition cursor-pointer'
+            onClick={() => setRepeatSong(prev => !prev)}
+          >
+            {repeatSong ? <Repeat1 size={18} /> : <Repeat size={18} />}
           </button>
 
           <button
             className='text-text-muted hover:text-text transition cursor-pointer'
-            onClick={() => setIsQueueModalOpen(prv => !prv)}
+            onClick={() => setIsQueueModalOpen(prev => !prev)}
           >
             <ListMusic size={18} />
           </button>
@@ -249,7 +260,7 @@ const MusicPlayer = () => {
               value={volume}
               min={0}
               max={100}
-              className='w-22.5 h-1 accent-primary cursor-pointer'
+              className='hidden sm:block w-22.5 h-1 accent-primary cursor-pointer'
             />
           </div>
         </div>

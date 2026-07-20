@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Library, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Library, Plus } from 'lucide-react';
 import useSession from '@/hooks/useSession';
 import LibraryList from '../features/music/components/LibraryList';
 
@@ -45,7 +45,7 @@ const Sidebar = () => {
           Your Library
         </h2>
 
-        <p className='text-text-muted text-sm mb-6 max-w-[220px]'>
+        <p className='text-text-muted text-sm mb-6 max-w-55'>
           Sign in to save songs, manage playlists and access your music library.
         </p>
 
@@ -69,7 +69,7 @@ const Sidebar = () => {
   return (
     <div>
       <aside
-        className={`fixed left-0 lg:left-2 bg-surface/80 backdrop-blur-md top-20 w-72 h-[calc(100vh-6rem)] border border-border rounded-xl p-3 overflow-y-auto transition-all duration-500 ${
+        className={`fixed left-0 lg:left-2 bg-surface/80 backdrop-blur-md top-20 w-72 h-[calc(100vh-6rem)] border border-border rounded-xl p-3 overflow-y-auto transition-all duration-500 z-40 ${
           sidebarOpen ? 'translate-x-3' : '-translate-x-full'
         } lg:translate-x-0`}
       >
@@ -92,9 +92,9 @@ const Sidebar = () => {
 
       <button
         onClick={() => setSidebarOpen(prev => !prev)}
-        className='lg:hidden fixed bottom-5 left-5 w-12 h-12 rounded-full bg-bg-soft border border-border text-text hover:text-primary hover:border-primary transition grid place-items-center z-50'
+        className='lg:hidden fixed left-0 top-1/2 -translate-y-1/2 z-50 w-8 h-14 rounded-r-xl bg-surface border border-border text-text flex items-center justify-center shadow-lg transition-all duration-300'
       >
-        <Library />
+        {sidebarOpen ? <ChevronLeft /> : <ChevronRight />}
       </button>
     </div>
   );

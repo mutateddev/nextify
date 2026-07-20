@@ -1,24 +1,26 @@
+import Link from 'next/link';
 import { Play } from 'lucide-react';
 
 const EmptySongState = () => {
   return (
-    <div className='min-h-[90vh] bg-bg-soft my-20 p-6 lg:ml-78 rounded-xl mx-4 flex flex-col items-center justify-center text-center'>
-      <div className='w-16 h-16 rounded-full bg-surface-hover flex items-center justify-center mb-4'>
-        <Play className='text-text-muted' size={22} />
+    <div className='col-span-full flex flex-col items-center justify-center py-20 text-center'>
+      <div className='mb-5 flex h-18 w-18 items-center justify-center rounded-full bg-surface border border-border'>
+        <Play className='text-primary' size={26} />
       </div>
 
-      <h2 className='text-xl font-semibold text-text mb-2'>No songs yet</h2>
+      <h2 className='text-2xl font-bold text-text'>No songs yet</h2>
 
-      <p className='text-text-muted text-sm max-w-md'>
-        Start building your library by uploading your first track.
+      <p className='mt-2 max-w-md text-sm text-text-muted'>
+        library is empty. Upload your first song and start building your
+        personal music collection.
       </p>
 
-      <a
+      <Link
         href='/upload-song'
-        className='mt-6 px-6 py-3 rounded-full bg-primary text-black font-semibold hover:opacity-90 transition'
+        className='mt-8 rounded-full bg-primary px-6 py-3 font-semibold text-black transition hover:opacity-90'
       >
-        Add your first song
-      </a>
+        Upload song
+      </Link>
     </div>
   );
 };

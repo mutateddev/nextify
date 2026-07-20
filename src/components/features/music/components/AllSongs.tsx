@@ -52,6 +52,18 @@ const SongsContainer = () => {
       </div>
     );
 
+  if (!songs || songs.length === 0) {
+    return (
+      <div className='min-h-[90vh] bg-bg-soft my-20 p-6 lg:ml-78 rounded-xl mx-4'>
+        <h2 className='text-xl text-text font-semibold font-sora mb-4'>
+          New Releases
+        </h2>
+
+        <EmptySongState />
+      </div>
+    );
+  }
+
   return (
     <div className='min-h-[90vh] bg-bg-soft my-20 p-6 lg:ml-78 rounded-xl mx-4'>
       <h2 className='text-xl text-text font-semibold font-sora mb-4'>
@@ -59,7 +71,7 @@ const SongsContainer = () => {
       </h2>
       <div className='grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
         {isLoading && <SongCardSkeleton />}
-        {!songs || (songs.length === 0 && <EmptySongState />)}
+
         {songs?.map((song: Song, i: number) => (
           <div
             key={song.id}
