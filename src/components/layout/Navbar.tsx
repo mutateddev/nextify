@@ -40,7 +40,8 @@ const Navbar = () => {
         <Search className='text-text-muted shrink-0' size={18} />
         <input
           type='text'
-          placeholder='What do you want to play?'
+          // placeholder='What do you want to play?'
+          placeholder='not work now, it will be ok very soon'
           className='w-full bg-transparent outline-none text-text placeholder:text-text-muted'
         />
       </div>
