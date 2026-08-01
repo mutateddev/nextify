@@ -25,6 +25,7 @@ const LoginPage = () => {
       });
       return;
     }
+
     const result = await loginUser(email, password);
 
     if (result.type === 'error') {
@@ -35,11 +36,12 @@ const LoginPage = () => {
       return;
     }
 
-    setMessage({ type: 'success', text: 'login successful.' });
+    setMessage({ type: 'success', text: 'Login successful.' });
 
     setTimeout(() => {
-      router.push('/');
-    }, 2000);
+      router.refresh();
+      window.location.href = '/upload-song';
+    }, 1000);
   };
 
   return (
