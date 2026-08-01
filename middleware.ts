@@ -31,14 +31,28 @@ export async function middleware(request: NextRequest) {
     },
   );
 
+  //  Vercel Logs
+  const allCookies = request.cookies.getAll();
+  console.log('--- MIDDLEWARE CHECK ---');
+  console.log('Path:', request.nextUrl.pathname);
+  console.log('Cookies Count:', allCookies.length);
+  console.log(
+    'Cookie Names:',
+    allCookies.map(c => c.name),
+  );
+
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
+  console.log('User ID:', user?.id ?? 'NO USER');
+  if (error) console.log('Auth Error Message:', error.message);
 
+  const { pathname } = request.nextUrl;
   const protectedRoutes = ['/upload-song'];
 
+  // protected routes
   if (!user && protectedRoutes.some(route => pathname.startsWith(route))) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
@@ -51,6 +65,7 @@ export async function middleware(request: NextRequest) {
     return redirectResponse;
   }
 
+  // prevent logged-in users from accessing login page
   if (user && pathname.startsWith('/login')) {
     const url = request.nextUrl.clone();
     url.pathname = '/';
