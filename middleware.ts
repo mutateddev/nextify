@@ -37,16 +37,30 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  //  protected routes
   const protectedRoutes = ['/upload-song'];
 
   if (!user && protectedRoutes.some(route => pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    const redirectResponse = NextResponse.redirect(url);
+
+    supabaseResponse.cookies.getAll().forEach(cookie => {
+      redirectResponse.cookies.set(cookie.name, cookie.value);
+    });
+
+    return redirectResponse;
   }
 
-  //  prevent logged-in users from accessing login page
   if (user && pathname.startsWith('/login')) {
-    return NextResponse.redirect(new URL('/', request.url));
+    const url = request.nextUrl.clone();
+    url.pathname = '/';
+    const redirectResponse = NextResponse.redirect(url);
+
+    supabaseResponse.cookies.getAll().forEach(cookie => {
+      redirectResponse.cookies.set(cookie.name, cookie.value);
+    });
+
+    return redirectResponse;
   }
 
   return supabaseResponse;
