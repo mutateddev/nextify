@@ -40,7 +40,7 @@ const LoginPage = () => {
 
     setTimeout(() => {
       router.refresh();
-      window.location.href = '/upload-song';
+      window.location.href = '/';
     }, 1000);
   };
 
