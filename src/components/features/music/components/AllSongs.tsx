@@ -2,22 +2,21 @@
 
 import { supabase } from '@/lib/supabase-client';
 import { useQuery } from '@tanstack/react-query';
-import { type Song } from '@/types/song';
+import type { Song } from '@/types/song';
 import { Play, Trash2 } from 'lucide-react';
 import Image from 'next/image';
+
 import useMusic from '../context/useMusic';
 import SongCardSkeleton from '@/components/ui/SongCardSkeleton';
 import EmptySongState from './EmptySongState';
 
-const SongsContainer = () => {
+const AllSongs = () => {
   const { setCurrentIndex, setQueue } = useMusic();
+
   const getAllSongs = async () => {
     const { data, error } = await supabase.from('songs').select('*');
-    if (error) {
-      console.log('fetch all songs error');
-      return;
-    }
 
+    if (error) throw new Error(error.message);
     return data;
   };
 
@@ -26,86 +25,79 @@ const SongsContainer = () => {
     isLoading,
     isError,
   } = useQuery({
-    queryFn: getAllSongs,
     queryKey: ['allSongs'],
+    queryFn: getAllSongs,
   });
 
-  const startPlayingSong = (songs: Song[], i: number) => {
-    setCurrentIndex(i);
+  const startPlayingSong = (songs: Song[], index: number) => {
+    setCurrentIndex(index);
     setQueue(songs);
   };
 
-  if (isError)
+  if (isError) {
     return (
-      <div className='flex flex-col items-center justify-center py-10 text-center'>
-        <Trash2 size={20} className='text-red-500 mb-2' />
-
-        <p className='text-text font-medium'>Failed to load library</p>
-        <p className='text-text-muted text-sm mt-1'>Please try again later</p>
-
+      <div className='flex min-h-[50vh] flex-col items-center justify-center px-4 text-center'>
+        <Trash2 size={28} className='mb-3 text-red-500' />
+        <p className='font-medium text-text'>Failed to load library</p>
         <button
           onClick={() => window.location.reload()}
-          className='mt-4 px-4 py-2 rounded-full bg-primary text-black text-sm font-medium hover:opacity-90 transition'
+          className='mt-4 rounded-full bg-primary px-6 py-2 text-sm font-semibold text-black transition hover:opacity-90 active:scale-95'
         >
           Retry
         </button>
       </div>
     );
-
-  if (!songs || songs.length === 0) {
-    return (
-      <div className='min-h-[90vh] bg-bg-soft my-20 p-6 lg:ml-78 rounded-xl mx-4'>
-        <h2 className='text-xl text-text font-semibold font-sora mb-4'>
-          New Releases
-        </h2>
-
-        <EmptySongState />
-      </div>
-    );
   }
 
   return (
-    <div className='min-h-[90vh] bg-bg-soft my-20 p-6 lg:ml-78 rounded-xl mx-4'>
-      <h2 className='text-xl text-text font-semibold font-sora mb-4'>
+    <div className='mx-3 mt-4 min-h-[calc(100dvh-8rem)] rounded-2xl bg-bg-soft p-4 sm:mx-4 sm:p-6 md:mx-6'>
+      <h2 className='mb-4 font-sora text-lg font-bold text-text sm:text-xl md:mb-6'>
         New Releases
       </h2>
-      <div className='grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
-        {isLoading && <SongCardSkeleton />}
 
-        {songs?.map((song: Song, i: number) => (
-          <div
-            key={song.id}
-            onClick={() => startPlayingSong(songs, i)}
-            className='group bg-surface p-3 rounded-lg cursor-pointer hover:bg-surface-hover transition'
-          >
-            <div className='relative'>
-              <Image
-                src={song.cover_image_url}
-                alt={song.title}
-                width={300}
-                height={300}
-                loading='eager'
-                className='w-full h-52 object-cover rounded-md'
-              />
+      {!isLoading && (!songs || songs.length === 0) ? (
+        <EmptySongState />
+      ) : (
+        <div className='grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
+          {isLoading && <SongCardSkeleton />}
 
-              <div className='absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-200'>
-                <button className='w-12 h-12 bg-primary text-black rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition '>
-                  <Play size={28} />
+          {songs?.map((song: Song, index: number) => (
+            <div
+              key={song.id}
+              onClick={() => startPlayingSong(songs, index)}
+              className='group flex cursor-pointer flex-col rounded-xl bg-surface p-2.5 transition-all duration-300 hover:bg-surface-hover hover:shadow-lg sm:p-3'
+            >
+              <div className='relative aspect-square w-full overflow-hidden rounded-lg bg-bg-soft'>
+                <Image
+                  src={song.cover_image_url}
+                  alt={song.title}
+                  fill
+                  sizes='(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw'
+                  className='object-cover transition duration-300 group-hover:scale-105'
+                />
+
+                <button
+                  aria-label={`Play ${song.title}`}
+                  className='absolute bottom-2 right-2 flex size-9 items-center justify-center rounded-full bg-primary text-black shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 md:size-10 md:translate-y-2 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100'
+                >
+                  <Play size={18} fill='currentColor' className='ml-0.5' />
                 </button>
               </div>
-            </div>
 
-            <div className='mt-3'>
-              <p className='text-text font-semibold group-hover:text-primary transition truncate'>
-                {song.title}
-              </p>
-              <p className='text-text-muted text-sm'>{song.artist}</p>
+              <div className='mt-2.5 min-w-0'>
+                <p className='truncate text-sm font-semibold text-text transition group-hover:text-primary'>
+                  {song.title}
+                </p>
+                <p className='truncate text-xs text-text-muted mt-0.5'>
+                  {song.artist}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
-export default SongsContainer;
+export default AllSongs;

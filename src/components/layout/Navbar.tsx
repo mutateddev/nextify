@@ -1,12 +1,13 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import { Search, LogIn, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import Logo from '../shared/Logo';
 import ToggleTheme from '../ui/ToggleTheme';
 import useSession from '@/hooks/useSession';
 import logoutUser from '@/lib/auth/logout-user';
-import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
   const router = useRouter();
@@ -14,71 +15,71 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     const result = await logoutUser();
-
     if (result.type === 'success') {
       router.push('/');
     }
   };
 
   return (
-    <nav className='fixed top-0 left-0 w-full h-16 flex items-center justify-between px-6 bg-surface/80 backdrop-blur-md border-b border-border z-50'>
-      {/* LEFT */}
-      <div className='flex items-center gap-6'>
+    <nav className='fixed left-0 top-0 z-50 flex h-16 w-full items-center justify-between border-b border-border bg-surface/85 px-4 backdrop-blur-md sm:px-6'>
+      <div className='flex items-center gap-4 min-w-0'>
         <Logo />
-
-        {/* <Link href='/'>
-          <HouseIcon
-            size={26}
-            strokeWidth={2.5}
-            className='text-text-muted hover:text-text transition'
-          />
-        </Link> */}
       </div>
 
-      {/* Center */}
-      <div className='flex items-center gap-3 h-11 w-1/3 px-4 rounded-full bg-bg-soft border border-border focus-within:border-primary transition'>
-        <Search className='text-text-muted shrink-0' size={18} />
+      <div className='hidden h-10 w-1/3 max-w-md items-center gap-2.5 rounded-full border border-border bg-bg-soft px-4 transition-all focus-within:border-primary focus-within:ring-1 focus-within:ring-primary md:flex'>
+        <Search size={18} className='shrink-0 text-text-muted' />
         <input
           type='text'
-          // placeholder='What do you want to play?'
-          placeholder='not work now, it will be ok very soon'
-          className='w-full bg-transparent outline-none text-text placeholder:text-text-muted'
+          placeholder='Search music, artists...'
+          className='w-full bg-transparent text-sm text-text outline-none placeholder:text-text-muted'
         />
       </div>
 
-      {/* RIGHT */}
-      <div className='flex items-center gap-6'>
-        <div className='flex gap-5 text-text-muted font-medium pr-6 border-r border-border'>
-          <a href='#' className='hover:text-text transition'>
-            Premium
-          </a>
-          <a href='#' className='hover:text-text transition'>
-            Support
-          </a>
-          <a href='#' className='hover:text-text transition'>
-            Download
-          </a>
+      <div className='flex items-center gap-2.5 sm:gap-4'>
+        <div className='hidden items-center gap-5 border-r border-border pr-5 text-sm font-medium text-text-muted xl:flex'>
+          <a className='cursor-pointer transition hover:text-text'>Premium</a>
+          <a className='cursor-pointer transition hover:text-text'>Support</a>
+          <a className='cursor-pointer transition hover:text-text'>Download</a>
         </div>
+
         <ToggleTheme />
-        {!loading && (
-          <>
-            {session ? (
+
+        {!loading &&
+          (session ? (
+            <>
               <button
                 onClick={handleLogout}
-                className='h-10 px-6 flex items-center rounded-full bg-bg text-text font-semibold hover:bg-surface-hover transition cursor-pointer'
+                className='flex size-10 cursor-pointer items-center justify-center rounded-full bg-bg-soft text-text transition hover:bg-surface-hover active:scale-95 sm:hidden'
+                aria-label='Logout'
+              >
+                <LogOut size={18} />
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className='hidden h-10 cursor-pointer rounded-full bg-bg-soft px-5 text-sm font-semibold text-text transition hover:bg-surface-hover active:scale-95 sm:block'
               >
                 Logout
               </button>
-            ) : (
+            </>
+          ) : (
+            <>
               <Link
                 href='/login'
-                className='h-10 px-6 flex items-center rounded-full bg-bg text-text font-semibold hover:bg-surface-hover transition'
+                className='flex size-10 cursor-pointer items-center justify-center rounded-full bg-primary text-black transition hover:opacity-90 active:scale-95 sm:hidden'
+                aria-label='Login'
+              >
+                <LogIn size={18} />
+              </Link>
+
+              <Link
+                href='/login'
+                className='hidden h-10 cursor-pointer items-center justify-center rounded-full bg-primary px-6 text-sm font-semibold text-black transition hover:opacity-90 active:scale-95 sm:flex'
               >
                 Login
               </Link>
-            )}
-          </>
-        )}
+            </>
+          ))}
       </div>
     </nav>
   );

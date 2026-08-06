@@ -9,20 +9,26 @@ const ToggleTheme = () => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const mounted = () => {
+    queueMicrotask(() => {
       setMounted(true);
-    };
-    mounted();
+    });
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return <div className='size-9 sm:size-10' />;
+  }
+
+  const isDark = resolvedTheme === 'dark';
 
   return (
     <button
-      onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-      className='flex size-10 items-center justify-center rounded-full border border-border bg-bg-soft transition hover:border-primary hover:text-primary cursor-pointer'
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      aria-label='Toggle theme'
+      className='flex size-9 cursor-pointer items-center justify-center rounded-full border border-border bg-bg-soft text-text transition hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary active:scale-95 sm:size-10'
     >
-      {resolvedTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+      <span className='transition-transform duration-300 hover:rotate-12'>
+        {isDark ? <Sun size={18} /> : <Moon size={18} />}
+      </span>
     </button>
   );
 };
